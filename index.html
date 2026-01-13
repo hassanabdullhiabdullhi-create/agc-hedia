@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="ha">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>AGC Media Pro - Sabuwar Duniya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1da1f2;
+            --secondary: #6c5ce7;
+            --bg: #000000;
+            --surface: #121212;
+            --card: #1c1c1e;
+            --text: #ffffff;
+            --light: #a0a0a0;
+            --glass: rgba(0, 0, 0, 0.95);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Splash */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 0.5s;
+        }
+
+        #splash img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Header */
+        .header {
+            padding: 15px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-bottom: 1px solid #333;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lang-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: none;
+        }
+
+        .lang-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .l-btn {
+            padding: 8px 18px;
+            background: #222;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid #444;
+        }
+
+        .l-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background: var(--glass);
+            backdrop-filter: blur(25px);
+            border-top: 1px solid #333;
+            display: flex;
+            z-index: 5000;
+            padding: 0 10px;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+            transition: 0.3s;
+        }
+
+        .nav-item.active {
+            color: white;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        /* Feed */
+        .page {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 100px;
+        }
+
+        .page.active {
+            display: flex;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .post {
+            background: var(--card);
+            margin: 15px;
+            padding: 20px;
+            border-radius: 30px;
+            border: 1px solid #333;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            object-fit: cover;
+            margin-right: 15px;
+            background: #444;
+        }
+
+        .post-media {
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 15px;
+            max-height: 400px;
+            object-fit: cover;
+            border: 1px solid #444;
+        }
+
+        /* TikTok Style */
+        #view-shorts {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+        }
+
+        .short {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .short-ui {
+            position: absolute;
+            bottom: 140px;
+            left: 20px;
+            right: 80px;
+            z-index: 10;
+        }
+
+        .short-sidebar {
+            position: absolute;
+            right: 15px;
+            bottom: 160px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .side-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 30px;
+            cursor: pointer;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .side-icon span {
+            font-size: 11px;
+            margin-top: 4px;
+            font-weight: bold;
+        }
+
+        /* Floating Action */
+        .fab {
+            position: fixed;
+            bottom: 105px;
+            right: 25px;
+            width: 65px;
+            height: 65px;
+            background: linear-gradient(45deg, var(--secondary), var(--primary));
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 35px;
+            z-index: 4000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            cursor: pointer;
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9000;
+            padding: 20px;
+        }
+
+        .modal-body {
+            background: var(--surface);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 40px;
+            padding: 30px;
+            border: 1px solid #444;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 20px;
+            background: #222;
+            border: 1px solid #444;
+            border-radius: 24px;
+            color: white;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        /* Media Picker */
+        .media-box {
+            background: #222;
+            border: 2px dashed #555;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .media-box:hover {
+            border-color: var(--primary);
+            background: rgba(29, 161, 242, 0.1);
+        }
+
+        .preview-content {
+            width: 100%;
+            border-radius: 20px;
+            margin-top: 15px;
+            display: none;
+            max-height: 250px;
+            object-fit: cover;
+            border: 1px solid #444;
+        }
+
+        .otp-in {
+            width: 60px;
+            height: 70px;
+            background: #222;
+            border: 2px solid #444;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            outline: none;
+        }
+
+        .otp-in:focus {
+            border-color: var(--primary);
+        }
+
+        /* TikTok Glitch Logo */
+        .glitch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .glitch {
+            font-weight: 900;
+            font-size: 28px;
+            position: relative;
+            color: white;
+            letter-spacing: -2px;
+            cursor: pointer;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: "AGC PRO";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff0050;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00f2ea;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                clip: rect(31px, 9999px, 94px, 0);
+            }
+
+            5% {
+                clip: rect(70px, 9999px, 71px, 0);
+            }
+
+            /* ... more steps ... */
+            100% {
+                clip: rect(67px, 9999px, 34px, 0);
+            }
+        }
+
+        @keyframes glitch-anim2 {
+
+            /* simplified for brevity but functional */
+            0% {
+                clip: rect(10px, 9999px, 20px, 0);
+            }
+
+            100% {
+                clip: rect(80px, 9999px, 90px, 0);
+            }
+        }
+
+        /* Live Stream Enhancements */
+        #live-video-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: none;
+        }
+
+        .live-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            pointer-events: none;
+        }
+
+        .live-comment {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin-bottom: 5px;
+            animation: slideIn 0.3s ease;
+            width: fit-content;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* PULSE LIVE TAG */
+        .pulse {
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+            }
+
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+            }
+
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+            }
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: absolute;
+            bottom: 100px;
+            right: 30px;
+            font-size: 24px;
+            animation: floatUp 2s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-300px) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Gifts Grid */
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gift-card {
+            background: #222;
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+
+        .gift-card:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .gift-icon {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        .gift-price {
+            font-size: 12px;
+            color: gold;
+            font-weight: bold;
+        }
+
+        /* Stats Row */
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--light);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="splash"><img src="https://i.ibb.co/vzKj9Zp/agc-welcome-splash.png"></div>
+
+    <!-- HEADER -->
+    <div id="header" class="header" style="display:none;">
+        <div class="header-top">
+            <div class="glitch-wrapper">
+                <div class="glitch" data-text="AGC PRO" id="t-logo">AGC PRO</div>
+            </div>
+            <div onclick="app.copyInvite()"
+                style="font-size:22px; cursor:pointer; background:rgba(255,255,255,0.1); padding:8px; border-radius:12px; border: 2px solid var(--primary);">
+                🔗</div>
+        </div>
+        <div class="lang-scroll">
+            <div class="l-btn" id="l-ha" onclick="app.setLang('ha')">Hausa</div>
+            <div class="l-btn" id="l-en" onclick="app.setLang('en')">English</div>
+            <div class="l-btn" id="l-ar" onclick="app.setLang('ar')">العربية</div>
+            <div class="l-btn" id="l-fr" onclick="app.setLang('fr')">Français</div>
+            <div class="l-btn" id="l-es" onclick="app.setLang('es')">Español</div>
+            <div class="l-btn" id="l-zh" onclick="app.setLang('zh')">中文</div>
+        </div>
+    </div>
+
+    <!-- PAGES -->
+    <div id="view-feed" class="page">
+        <div id="feed-container"></div>
+    </div>
+
+    <div id="view-shorts" class="page">
+        <div id="shorts-container" style="height:100%;"></div>
+    </div>
+
+    <div id="view-live" class="page">
+        <div
+            style="height:550px; background:#111; margin:10px; border-radius:40px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; border:2px solid #333; box-shadow:0 20px 40px rgba(0,0,0,0.5);">
+            <video id="live-video-stream" autoplay playsinline muted></video>
+            <div id="live-screen" style="text-align:center;">
+                <div style="font-size:70px; margin-bottom:15px;">📡</div>
+                <h3 id="t-live-off" style="color:var(--light);">Babu mai Live yanzu</h3>
+            </div>
+            <div style="position:absolute; top:30px; left:30px; background:red; padding:5px 15px; border-radius:10px; font-weight:900; font-size:14px; display:none; z-index:100;"
+                id="live-tag" class="pulse">LIVE 🔴</div>
+            <div class="live-overlay" id="live-comments"></div>
+        </div>
+        <div style="padding:0 25px;">
+            <button class="btn" style="height:70px; font-size:20px;" onclick="app.startLive()" id="t-start-live">📡 Fara
+                Live Streaming</button>
+            <button class="btn" onclick="app.openGifts()"
+                style="background:#f1c40f; color:#000; margin-top:15px; height:60px; font-size:18px;">🎁 Tura Kyauta
+                (Send Gift)</button>
+        </div>
+    </div>
+
+    <div id="view-search" class="page">
+        <div style="padding:20px;"><input type="text" class="input-box" id="t-search-p"
+                placeholder="Nemi kowa a duniya..." oninput="app.search(this.value)"></div>
+        <div id="search-results"></div>
+    </div>
+
+    <div id="view-profile" class="page">
+        <div style="padding:50px; text-align:center;">
+            <div style="position:relative; display:inline-block;">
+                <img id="u-img"
+                    style="width:140px; height:140px; border-radius:50%; border:6px solid var(--primary); margin-bottom:25px; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                <div onclick="app.changeAvatar()"
+                    style="position:absolute; bottom:30px; right:5px; background:var(--primary); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--bg);">
+                    📸</div>
+            </div>
+            <h2 id="u-name" style="font-size:28px;">User</h2>
+            <p id="t-profile-desc" style="color:var(--light); font-size:15px; margin-bottom:25px;">Mamba a duniyar AGC
+                Media</p>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="stat-num">10,000</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">1,000</div>
+                    <div class="stat-label">Following</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num">45.5k</div>
+                    <div class="stat-label">Likes</div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="app.openGifts()" style="background:#f1c40f; color:#000; margin-bottom:20px;">🎁
+                Kyauta (Gifts)</button>
+            <button class="btn" onclick="app.copyInvite()" id="t-invite-btn"
+                style="margin-bottom:20px; background:#222; border:1px solid #444;">Copy Invite Link 🔗</button>
+            <button class="btn" style="background:#ff4757;" onclick="app.logout()">Logout 🚪</button>
+        </div>
+    </div>
+
+    <!-- LOGIN PAGE -->
+    <div id="view-login" class="page"
+        style="padding:40px; justify-content:center; background:linear-gradient(135deg, #000 0%, #121212 100%); position:fixed; top:0; left:0; width:100%; height:100%; z-index:8000;">
+        <div style="text-align:center; margin-bottom:50px;">
+            <div class="glitch-wrapper" style="transform: scale(1.5); margin-bottom:20px;">
+                <div class="glitch" data-text="AGC PRO">AGC PRO</div>
+            </div>
+            <p style="color:var(--light); font-weight:600;" id="t-welcome">Barka da zuwa AGC Global!</p>
+        </div>
+
+        <div id="login-form">
+            <div style="display:flex; flex-direction:column; gap:15px;">
+                <button class="btn" style="background:#ffffff; color:#000;" onclick="app.authType('google')">
+                    <img src="https://www.google.com/favicon.ico" style="width:20px;"> Login with Google
+                </button>
+                <button class="btn" style="background:#444;" onclick="app.authType('phone')">
+                    📞 Continue with Phone
+                </button>
+                <div style="display:flex; align-items:center; gap:10px; margin:10px 0;">
+                    <div style="flex:1; height:1px; background:#333;"></div>
+                    <span style="color:#666; font-size:12px;">OR</span>
+                    <div style="flex:1; height:1px; background:#333;"></div>
+                </div>
+                <input type="text" id="login-name" class="input-box" placeholder="Shigar da sunan ka..."
+                    style="margin-bottom:0;">
+                <button class="btn" onclick="app.login()">Get Started 🚀</button>
+            </div>
+        </div>
+
+        <div id="phone-form" style="display:none;">
+            <h3 style="margin-bottom:20px; text-align:center;">Shigar da Lambar Wayar ka</h3>
+            <div style="display:flex; gap:10px; margin-bottom:15px;">
+                <select class="input-box" style="width:100px; padding:0 10px; margin:0;">
+                    <option>+234</option>
+                    <option>+227</option>
+                    <option>+966</option>
+                </select>
+                <input type="tel" id="u-phone" class="input-box" placeholder="0801234..." style="margin:0; flex:1;">
+            </div>
+            <button class="btn" onclick="app.sendOTP()">Tura Lambar Sirri (OTP)</button>
+            <p onclick="app.authType('main')"
+                style="text-align:center; margin-top:20px; color:var(--primary); cursor:pointer;">Koma Baya</p>
+        </div>
+
+        <div id="otp-form" style="display:none;">
+            <h3 style="margin-bottom:20px; text-align:center;">Shigar da Lambar OTP</h3>
+            <p style="text-align:center; font-size:13px; color:var(--light); margin-bottom:20px;">Mun tura lambobi 4
+                zuwa wayar ka</p>
+            <div style="display:flex; gap:15px; justify-content:center; margin-bottom:25px;">
+                <input type="number" class="otp-in" maxlength="1"
+                    oninput="if(this.value.length>1)this.value=this.value.slice(0,1)">
+                <input type="number" class="otp-in" maxlength="1">
+                <input type="number" class="otp-in" maxlength="1">
+                <input type="number" class="otp-in" maxlength="1">
+            </div>
+            <button class="btn" onclick="app.verifyOTP()">Verify & Login</button>
+        </div>
+    </div>
+
+    <!-- GIFTS MODAL -->
+    <div id="gift-modal" class="modal">
+        <div class="modal-body">
+            <h2 style="text-align:center; margin-bottom:20px;">Tura Kyauta 🎁</h2>
+            <div class="gifts-grid">
+                <div class="gift-card" onclick="app.sendGift('🌹', 'Rose')">
+                    <div class="gift-icon">🌹</div>
+                    <div class="gift-price">1 Coin</div>
+                </div>
+                <div class="gift-card" onclick="app.sendGift('🦁', 'Lion')">
+                    <div class="gift-icon">🦁</div>
+                    <div class="gift-price">10,000 Coins</div>
+                </div>
+                <div class="gift-card" onclick="app.sendGift('👑', 'Crown')">
+                    <div class="gift-icon">👑</div>
+                    <div class="gift-price">5,000 Coins</div>
+                </div>
+                <div class="gift-card" onclick="app.sendGift('🚗', 'Car')">
+                    <div class="gift-icon">🚗</div>
+                    <div class="gift-price">2,000 Coins</div>
+                </div>
+                <div class="gift-card" onclick="app.sendGift('💎', 'Diamond')">
+                    <div class="gift-icon">💎</div>
+                    <div class="gift-price">500 Coins</div>
+                </div>
+                <div class="gift-card" onclick="app.sendGift('⚡', 'Flash')">
+                    <div class="gift-icon">⚡</div>
+                    <div class="gift-price">10 Coins</div>
+                </div>
+            </div>
+            <button class="btn" style="background:#333; margin-top:25px;"
+                onclick="document.getElementById('gift-modal').style.display='none'">Soke (Cancel)</button>
+        </div>
+    </div>
+
+    <!-- POST MODAL -->
+    <div id="post-modal" class="modal">
+        <div class="modal-body">
+            <h2 style="margin-bottom:25px; text-align:center;" id="t-post-h">Sanya Sabon Sako</h2>
+            <textarea id="p-text" class="input-box" style="height:140px; resize:none;"
+                placeholder="Rubuta sakon ka anan..."></textarea>
+
+            <div class="media-box" onclick="document.getElementById('p-file').click()">
+                <div id="media-prompt">
+                    <span style="font-size:40px;">📸</span><br>
+                    <b id="t-select-media">Zabi Hoto ko Bidiyo</b><br>
+                    <small style="color:var(--light);">Taba nan don daukar kaya</small>
+                </div>
+                <input type="file" id="p-file" hidden accept="image/*,video/*" onchange="app.handleFile(this.files[0])">
+                <img id="p-prev-img" class="preview-content">
+                <video id="p-prev-vid" class="preview-content" controls></video>
+            </div>
+
+            <div style="display:flex; gap:15px;">
+                <button class="btn" onclick="app.savePost()" id="t-post-btn">Sanya Yanzu 🚀</button>
+                <button class="btn" style="background:#333; height:60px;" onclick="app.closePost()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHAT VIEW -->
+    <div id="chat-view" class="modal" style="padding:0; background:black; flex-direction:column;">
+        <div class="header" style="border:none;">
+            <div class="header-top">
+                <span onclick="app.closeChat()" style="font-size:32px; cursor:pointer;">⬅️</span>
+                <span id="c-name" style="font-weight:900; font-size:22px;">Name</span>
+                <div style="width:40px;"></div>
+            </div>
+        </div>
+        <div id="chat-msgs"
+            style="flex:1; padding:25px; overflow-y:auto; display:flex; flex-direction:column; gap:15px;"></div>
+        <div style="padding:25px; background:#111; display:flex; gap:15px; border-top:1px solid #333;">
+            <input type="text" id="c-in" class="input-box" placeholder="Rubuta sakon..." style="margin:0;">
+            <button class="btn" style="width:auto; padding:0 30px;" onclick="app.sendMsg()">🚀</button>
+        </div>
+    </div>
+
+    <div class="fab" onclick="app.openPost()">+</div>
+
+    <!-- NAV -->
+    <div class="nav" id="bottom-nav" style="display:none;">
+        <div class="nav-item" onclick="app.go('view-feed')"><span>🏠</span>
+            <div class="nav-label" id="t-nav-h">Gida</div>
+        </div>
+        <div class="nav-item" onclick="app.go('view-shorts')"><span>🔥</span>
+            <div class="nav-label" id="t-nav-t">Kallo</div>
+        </div>
+        <div class="nav-item" onclick="app.go('view-live')"><span>📡</span>
+            <div class="nav-label" id="t-nav-l">Live</div>
+        </div>
+        <div class="nav-item" onclick="app.go('view-search')"><span>🔍</span>
+            <div class="nav-label" id="t-nav-s">Nema</div>
+        </div>
+        <div class="nav-item" onclick="app.go('view-profile')"><span>👤</span>
+            <div class="nav-label" id="t-nav-p">Profil</div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            lang: localStorage.getItem('agc_l') || 'ha',
+            trans: {
+                ha: {
+                    welcome: "Barka da zuwa AGC Media!", search_p: "Nemi kowa a duniya...",
+                    nav_h: "Gida", nav_t: "Kallo", nav_l: "Live", nav_s: "Nema", nav_p: "Profil",
+                    start_live: "📡 Fara Live Streaming", post_h: "Sanya Sabon Sako", post_btn: "Sanya Yanzu 🚀",
+                    invite: "Kofalo Link din Gayyata", copied: "An kwafo link dinka!", live_off: "Babu mai Live yanzu",
+                    select_media: "Zabi Hoto ko Bidiyo", profile_desc: "Mamba a duniyar AGC Media"
+                },
+                en: {
+                    welcome: "Welcome to AGC Global!", search_p: "Search for anyone...",
+                    nav_h: "Home", nav_t: "Shorts", nav_l: "Live", nav_s: "Search", nav_p: "Profile",
+                    start_live: "📡 Start Live Stream", post_h: "Create New Post", post_btn: "Post Now 🚀",
+                    invite: "Copy Invite Link", copied: "Link copied!", live_off: "Stream is Offline",
+                    select_media: "Select Photo or Video", profile_desc: "Member of AGC Media Global"
+                }
+            },
+            u: null, posts: [], chats: {}, curMedia: null, curType: null,
+            mock: [
+                { id: '101', n: 'Ali Nuhu', a: 'https://i.pravatar.cc/150?u=12' },
+                { id: '102', n: 'Rahama Sadau', a: 'https://i.pravatar.cc/150?u=22' }
+            ],
+            videos: [
+                { id: 1, user: 'Ali Nuhu', text: 'Barka da rana mutane 🌍 #AGC #Global', likes: '15k', video: 'https://cdn.pixabay.com/vimeo/305260196/video.mp4?width=1280&hash=000' },
+                { id: 2, user: 'Rahama', text: 'Sabuwar Duniyar Hausawa ta zamani!', likes: '10k', video: 'https://cdn.pixabay.com/vimeo/327310192/video.mp4?width=1280&hash=111' }
+            ],
+
+            init: () => {
+                setTimeout(() => {
+                    const s = document.getElementById('splash');
+                    if (s) { s.style.opacity = '0'; setTimeout(() => s.style.display = 'none', 800); }
+                    if (app.u) {
+                        document.getElementById('header').style.display = 'flex';
+                        document.getElementById('bottom-nav').style.display = 'flex';
+                    }
+                }, 2500);
+
+                app.u = JSON.parse(localStorage.getItem('agc_u'));
+                app.posts = JSON.parse(localStorage.getItem('agc_p')) || [
+                    { id: 1, author: 'Admin', text: 'Barka da zuwa AGC Media v15.0! Ga sabon wajen sanya hoto nan a fili.', avatar: 'https://via.placeholder.com/50', time: Date.now() }
+                ];
+                app.chats = JSON.parse(localStorage.getItem('agc_c')) || {};
+
+                if (app.u) { app.go('view-feed'); app.upUI(); }
+                else { app.go('view-login'); }
+                app.upLang();
+            },
+
+            login: () => {
+                const val = document.getElementById('login-name').value;
+                if (!val) return alert("Don Allah shigar da sunan ka!");
+                app.u = { id: 'u_' + Date.now(), name: val, avatar: 'https://i.pravatar.cc/150?u=' + val, phone: app.curPhone || '' };
+                localStorage.setItem('agc_u', JSON.stringify(app.u));
+                location.reload();
+            },
+
+            authType: (type) => {
+                document.getElementById('login-form').style.display = type === 'main' ? 'block' : 'none';
+                document.getElementById('phone-form').style.display = type === 'phone' ? 'block' : 'none';
+                document.getElementById('otp-form').style.display = 'none';
+                if (type === 'google') alert("Redirecting to Google Auth...");
+            },
+
+            sendOTP: () => {
+                const p = document.getElementById('u-phone').value;
+                if (p.length < 8) return alert("Lambar wayar bata cika ba!");
+                app.curPhone = p;
+                document.getElementById('phone-form').style.display = 'none';
+                document.getElementById('otp-form').style.display = 'block';
+            },
+
+            verifyOTP: () => {
+                // Mock verification
+                document.getElementById('otp-form').style.display = 'none';
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('login-name').focus();
+                alert("An tabbatar da lambar ka! Yanzu zabi sunan da kake so ka bayyana dashi.");
+            },
+
+            changeAvatar: () => {
+                const n = prompt("Sanya sabon link na hoton ka:");
+                if (n) {
+                    app.u.avatar = n;
+                    localStorage.setItem('agc_u', JSON.stringify(app.u));
+                    app.upUI();
+                }
+            },
+
+            openGifts: () => document.getElementById('gift-modal').style.display = 'flex',
+
+            sendGift: (icon, name) => {
+                alert(`An tura ${name} ${icon} cikin nasara! ✨`);
+                document.getElementById('gift-modal').style.display = 'none';
+
+                // If in live, show animation
+                if (document.getElementById('view-live').classList.contains('active')) {
+                    const h = document.createElement('div');
+                    h.className = 'heart';
+                    h.innerHTML = icon;
+                    h.style.fontSize = '80px';
+                    h.style.left = '40%';
+                    document.getElementById('view-live').appendChild(h);
+                    setTimeout(() => h.remove(), 2000);
+                }
+            },
+
+            logout: () => { localStorage.removeItem('agc_u'); location.reload(); },
+
+            setLang: (l) => { app.lang = l; localStorage.setItem('agc_l', l); location.reload(); },
+
+            upLang: () => {
+                const t = app.trans[app.lang] || app.trans['en'];
+                document.getElementById('t-nav-h').innerText = t.nav_h;
+                document.getElementById('t-nav-t').innerText = t.nav_t;
+                document.getElementById('t-nav-l').innerText = t.nav_l;
+                document.getElementById('t-nav-s').innerText = t.nav_s;
+                document.getElementById('t-nav-p').innerText = t.nav_p;
+                document.getElementById('t-search-p').placeholder = t.search_p;
+                document.getElementById('t-start-live').innerText = t.start_live;
+                document.getElementById('t-live-off').innerText = t.live_off;
+                document.getElementById('t-post-h').innerText = t.post_h;
+                document.getElementById('t-post-btn').innerText = t.post_btn;
+                document.getElementById('t-invite-btn').innerText = t.invite + " 🔗";
+                document.getElementById('t-select-media').innerText = t.select_media;
+                document.getElementById('t-profile-desc').innerText = t.profile_desc;
+
+                document.querySelectorAll('.l-btn').forEach(b => b.classList.remove('active'));
+                const cur = document.getElementById('l-' + app.lang);
+                if (cur) cur.classList.add('active');
+            },
+
+            upUI: () => {
+                document.getElementById('u-name').innerText = app.u.name;
+                document.getElementById('u-img').src = app.u.avatar;
+                app.renderFeed();
+                app.renderVideos();
+                app.search('');
+            },
+
+            go: (id) => {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                const p = document.getElementById(id); if (p) p.classList.add('active');
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                const map = { 'view-feed': 0, 'view-shorts': 1, 'view-live': 2, 'view-search': 3, 'view-profile': 4 };
+                const idx = map[id];
+                if (idx !== undefined) document.querySelectorAll('.nav-item')[idx].classList.add('active');
+                if (id === 'view-shorts') document.getElementById('header').style.display = 'none';
+                else if (app.u) document.getElementById('header').style.display = 'flex';
+            },
+
+            renderFeed: () => {
+                const c = document.getElementById('feed-container'); c.innerHTML = '';
+                app.posts.forEach(p => {
+                    const d = document.createElement('div'); d.className = 'post';
+                    let media = '';
+                    if (p.media) {
+                        if (p.type === 'video') media = `<video src="${p.media}" class="post-media" controls></video>`;
+                        else media = `<img src="${p.media}" class="post-media">`;
+                    }
+                    d.innerHTML = `
+                        <div style="display:flex;align-items:center;margin-bottom:15px;"><img src="${p.avatar || 'https://via.placeholder.com/48'}" class="avatar"><b>${p.author}</b></div>
+                        <p style="font-size:17px; line-height:1.5;">${p.text}</p>
+                        ${media}
+                    `;
+                    c.appendChild(d);
+                });
+            },
+
+            renderVideos: () => {
+                const c = document.getElementById('shorts-container'); c.innerHTML = '';
+                app.videos.forEach(v => {
+                    const d = document.createElement('div'); d.className = 'short';
+                    d.innerHTML = `
+                        <video loop playsinline style="width:100%; height:100%; object-fit:cover;" src="${v.video}" onclick="this.paused?this.play():this.pause()"></video>
+                        <div class="short-ui">
+                            <b style="font-size:24px;">@${v.user}</b>
+                            <p style="margin-top:10px; font-size:16px;">${v.text}</p>
+                        </div>
+                        <div class="short-sidebar">
+                            <div class="side-icon">❤️<span>${v.likes}</span></div>
+                            <div class="side-icon">💬<span>Hira</span></div>
+                            <div class="side-icon">🚀<span>Tura</span></div>
+                        </div>
+                    `;
+                    c.appendChild(d);
+                });
+            },
+
+            handleFile: (file) => {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    app.curMedia = e.target.result;
+                    app.curType = file.type.startsWith('video') ? 'video' : 'image';
+                    document.getElementById('media-prompt').style.display = 'none';
+                    if (app.curType === 'image') {
+                        document.getElementById('p-prev-img').src = app.curMedia;
+                        document.getElementById('p-prev-img').style.display = 'block';
+                        document.getElementById('p-prev-vid').style.display = 'none';
+                    } else {
+                        document.getElementById('p-prev-vid').src = app.curMedia;
+                        document.getElementById('p-prev-vid').style.display = 'block';
+                        document.getElementById('p-prev-img').style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(file);
+            },
+
+            openPost: () => document.getElementById('post-modal').style.display = 'flex',
+            closePost: () => {
+                document.getElementById('post-modal').style.display = 'none';
+                document.getElementById('p-text').value = '';
+                document.getElementById('media-prompt').style.display = 'block';
+                document.getElementById('p-prev-img').style.display = 'none';
+                document.getElementById('p-prev-vid').style.display = 'none';
+                app.curMedia = null; app.curType = null;
+            },
+            savePost: () => {
+                const val = document.getElementById('p-text').value;
+                if (!val && !app.curMedia) return;
+                app.posts.unshift({
+                    id: Date.now(), author: app.u.name, avatar: app.u.avatar,
+                    text: val, media: app.curMedia, type: app.curType
+                });
+                localStorage.setItem('agc_p', JSON.stringify(app.posts.slice(0, 50)));
+                app.renderFeed(); app.closePost(); app.go('view-feed');
+            },
+
+            startLive: () => {
+                const btn = document.getElementById('t-start-live');
+                btn.disabled = true;
+                btn.innerText = "Connecting...";
+
+                navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                    .then(stream => {
+                        const video = document.getElementById('live-video-stream');
+                        video.srcObject = stream;
+                        video.style.display = 'block';
+                        document.getElementById('live-screen').style.display = 'none';
+                        document.getElementById('live-tag').style.display = 'block';
+                        btn.style.display = 'none';
+
+                        // Mock Comments
+                        const comments = [
+                            "Sannu!", "Masha Allah 🔥", "Ikon Allah", "Gaskiya app din nan ya hadu",
+                            "Ina son wannan live din", "AGC PRO is the best!", "Daga Kano nake kallo",
+                            "Muna tare!", "❤️🚀🔥", "Kai! Professional ne wannan"
+                        ];
+                        setInterval(() => {
+                            if (document.getElementById('view-live').classList.contains('active')) {
+                                const container = document.getElementById('live-comments');
+                                const c = document.createElement('div');
+                                c.className = 'live-comment';
+                                c.innerHTML = `<b>User_${Math.floor(Math.random() * 999)}:</b> ${comments[Math.floor(Math.random() * comments.length)]}`;
+                                container.appendChild(c);
+                                if (container.children.length > 5) container.removeChild(container.firstChild);
+
+                                // Floating Heart
+                                if (Math.random() > 0.5) {
+                                    const h = document.createElement('div');
+                                    h.className = 'heart';
+                                    h.innerHTML = ['❤️', '💖', '✨', '🔥'][Math.floor(Math.random() * 4)];
+                                    h.style.left = (Math.random() * 80 + 10) + '%';
+                                    document.getElementById('view-live').appendChild(h);
+                                    setTimeout(() => h.remove(), 2000);
+                                }
+                            }
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        alert("Baza mu iya bude camera ba: " + err);
+                        btn.disabled = false;
+                        btn.innerText = app.trans[app.lang].start_live;
+                    });
+            },
+
+            search: (q) => {
+                const res = document.getElementById('search-results'); res.innerHTML = '';
+                app.mock.forEach(m => {
+                    if (m.n.toLowerCase().includes(q.toLowerCase())) {
+                        const d = document.createElement('div'); d.className = 'post';
+                        d.style.display = 'flex'; d.style.alignItems = 'center'; d.style.justifyContent = 'space-between';
+                        d.innerHTML = `<div style="display:flex;align-items:center;"><img src="${m.a}" class="avatar"><b>${m.n}</b></div><button class="btn" style="width:auto;padding:10px 25px;" onclick="app.openChat('${m.id}')">${app.lang === 'ha' ? 'Hira' : 'Chat'}</button>`;
+                        res.appendChild(d);
+                    }
+                });
+            },
+
+            openChat: (id) => {
+                const m = app.mock.find(x => x.id === id) || { n: 'User' };
+                document.getElementById('chat-view').style.display = 'flex';
+                document.getElementById('c-name').innerText = m.n;
+                app.actChat = id; app.renderMsgs();
+            },
+            closeChat: () => document.getElementById('chat-view').style.display = 'none',
+            renderMsgs: () => {
+                const c = document.getElementById('chat-msgs'); c.innerHTML = '';
+                (app.chats[app.actChat] || []).forEach(m => {
+                    const d = document.createElement('div'); d.className = `msg ${m.s}`;
+                    d.innerText = m.t; c.appendChild(d);
+                });
+                c.scrollTop = c.scrollHeight;
+            },
+            sendMsg: () => {
+                const i = document.getElementById('c-in'); if (!i.value) return;
+                if (!app.chats[app.actChat]) app.chats[app.actChat] = [];
+                app.chats[app.actChat].push({ s: 'me', t: i.value }); i.value = ''; app.renderMsgs();
+                localStorage.setItem('agc_c', JSON.stringify(app.chats));
+            },
+            copyInvite: () => {
+                const url = window.location.origin + window.location.pathname + `?invite=${app.u.id}`;
+                navigator.clipboard.writeText(url).then(() => alert(app.trans[app.lang].copied));
+            }
+        };
+        window.onload = app.init;
+    </script>
+</body>
+
+</html>
